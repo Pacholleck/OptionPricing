@@ -1,0 +1,153 @@
+---
+title: "Applied Finance: European Up-and-In Put Option"
+subtitle: "Path-dependent option pricing with Monte Carlo and the `Rcpp` package"
+author: "Dustin Pacholleck"
+date: "Academic Year 2022/2023"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+```
+
+# Objective
+
+This project aims to use Monte Carlo Simulation for pricing a European style up-and-in put option with a barrier active between the moment of pricing and the option expiry.
+
+Specifically, the project tries to:
+  1. find the theoretical price of the given option,
+  2. show the relation between the theoretical price of the given option and two factors (simultaneously):
+    a) volatility of the underlying instrument returns, and
+    b) time to maturity of the option.
+
+# Assumptions
+
+The project assumes 
+  * 10,000 Monte Carlo simulations,
+  * 252 number of time steps per year, and
+  * a barrier of $B = 125$
+
+
+# Description of the Option
+
+The given option is descriped as followed: 
+  * price of the underlying at the moment of option pricing: $S0 = 95$,
+  * strike price $K = 100$,
+  * annualized volatility rate $\sigma = 0.24$ 
+  * annualized risk-free rate $r = 0.07$
+  * time to maturity $t = 0.75$
+  
+A holder of an European option can exercise only at exercise date. The option includes an Up-and-In barrier which means the underlying price has to be higher than the barrier to activate the option.
+
+In finance, an **option** is an agreement, which gives the holder a right for **buy** or **sell** a certain underlying instrument for a given price (*exercise price*) at a given moment in futures (*expiry date*).
+
+**PUT** option -- gives the holder right to **sell** a given amount of underlying instrument for a given price at the given moment in future
+
+# Interpretation of the results
+
+```{r Setup, include=FALSE}
+
+# loading packages
+library(tidyverse)
+
+remove.packages("optionPricer")
+detach("package:optionPricer", unload = TRUE) # if it still is in memory
+
+install.packages("Packages/optionPricer_1.0.tar.gz",
+                 type = "source",
+                 repos = NULL)
+
+
+#' Calculate the theoretical price of a European style up-and-in put option using Monte Carlo simulation
+#' @param nInt the number of time steps per year
+#' @param strike the strike price of the option
+#' @param spot the initial price of the underlying instrument
+#' @param vol the volatility of the underlying instrument returns
+#' @param r the risk-free interest rate
+#' @param expiry the time to maturity of the option (in years)
+#' @param B the barrier level
+#' @param nReps the number of Monte Carlo simulations to run
+#' @return the approximated theoretical price of the up-and-in put option
+#' @examples
+#' up_and_in_put_option_R(126,100,95,0.24,0.07,0.75,125,1000)
+```
+
+```{r Price Estimation, echo=FALSE, cache=TRUE}
+
+# R wrapping function: general
+getEuropeanPutPrice_R <- function(nInt, strike, spot, vol, r, expiry, B, nReps) {
+  return(optionPricer::getEuropeanPutPrice(nInt, strike, spot, vol, r, expiry, B, nReps))
+}
+
+# Estimate theoretical price of the given option
+price <- getEuropeanPutPrice_R(252,100,95,0.24,0.07,0.75,125,10000)
+
+```
+
+The theoretical option price is estimated as **`r price`** for the given option. 
+
+```{r}
+# R wrapping function: general
+getEuropeanPutPrice_withB <- function(B) {
+  return(optionPricer::getEuropeanPutPrice(252,100,95,0.24,0.07,0.75,B,10000))
+}
+
+# call the wrapping function 
+getEuropeanPutPrice_withB(0.5)
+
+# arguments values of values of function 
+B <- seq(50,400, by = 25)
+prices <- sapply(B, getEuropeanPutPrice_withB)
+
+# visualization: options price vs. expiry 
+tibble( B, prices) %>%
+  ggplot(aes(B, prices)) +
+  geom_point(col = "red") +
+  labs(
+    x     = "Barrier",
+    y     = "Option Price",
+    title = "Price of European Up-and-In Put Option vs. Barrier",
+    caption = "source: own calculations with the optionPricer package")
+```
+
+```{r Relationship, echo=FALSE, cache=TRUE}
+
+# R wrapping function: option price vs. volatility and maturity
+getEuropeanPutPrice_WithVolAndExpiry <- function (vol, expiry) {
+  return(
+    optionPricer::getEuropeanPutPrice(252,100,95,vol,0.07,expiry,125,10000))
+}
+
+# sequences of argument values
+vol <- seq(0, 1, by = 0.1)
+expiry  <- seq(0, 1, by = 0.1)
+# setup grid with arguments
+grid      <- expand.grid(vol = vol, expiry = expiry)
+# get prices for grid
+prices    <- mapply(getEuropeanPutPrice_WithVolAndExpiry, 
+                    vol = grid$vol, expiry = grid$expiry)
+result.df <- data.frame(grid, prices)
+
+# visualization: option price vs. volatility and maturity
+grid %>% 
+  as_tibble() %>%
+  bind_cols(price = prices) %>%
+  ggplot(aes(x = vol, y = price, group = as.factor(expiry), colour = as.factor(expiry))) +
+  geom_line() +
+  geom_point(size = 1, shape = 21, fill = "white") +
+  labs(
+    x     = "Volatility",
+    y     = "Option Price",
+    title = "Price of European Up-and-In Put Option vs. Volatility and Time to Maturity",
+    caption = "source: own calculations with the optionPricer package",
+    colour='Time to Maturity')
+
+```
+
+1. **time to maturity** -- influences positively the put option values. The longer time to maturity, the higher the probability that the option becomes active and in-the-money.
+
+2. **volatility of underlying prices** -- influences positively the put option values. The higher the volatility, the higher the probability that the option becomes active and in-the-money.
+
+# Code of Honor
+In accordance with the Honor Code, I certify that my answers here are my own work, and I
+did not make my solutions available to anyone else.
