@@ -5,7 +5,3 @@ getEuropeanPutPrice <- function(nInt, Strike, Spot, Vol, Rfr, Expiry, B, nReps =
     .Call(`_optionPricer_getEuropeanPutPrice`, nInt, Strike, Spot, Vol, Rfr, Expiry, B, nReps)
 }
 
-rcpp_hello_world <- function() {
-    .Call(`_optionPricer_rcpp_hello_world`)
-}
-

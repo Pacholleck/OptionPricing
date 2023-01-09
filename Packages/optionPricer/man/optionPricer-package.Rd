@@ -3,20 +3,17 @@
 \alias{optionPricer}
 \docType{package}
 \title{
-  A short title line describing what the package does
+  Pricing a European Up-and-In Put Option with Monte Carlo similation
 }
 \description{
-  A more detailed description of what the package does. A length
-  of about one to five lines is recommended.
+  This package simulates a European Up-and-In Put Option and returns its theoretical price.
 }
 \details{
   This section should provide a more detailed overview of how to use the
   package, including the most important functions.
 }
 \author{
-Your Name, email optional.
-
-Maintainer: Your Name <your@email.com>
+Dustin Pacholleck
 }
 \references{
   This optional section can contain literature or other references for

@@ -1,12 +1,11 @@
 Package: optionPricer
 Type: Package
-Title: What the Package Does in One 'Title Case' Line
+Title: Pricing a European Up-and-In Put Option with Monte Carlo similation
 Version: 1.0
 Date: 2023-01-09
-Author: Your Name
-Maintainer: Your Name <your@email.com>
-Description: One paragraph description of what the package does as one or more full
-          sentences.
+Author: Dustin Pacholleck
+Maintainer: Dustin Pacholleck <d.pacholleck@student.uw.edu.pl>
+Description: This package simulates a European Up-and-In Put Option and returns its theoretical price. 
 License: GPL (>= 2)
 Imports: Rcpp (>= 1.0.9)
 LinkingTo: Rcpp

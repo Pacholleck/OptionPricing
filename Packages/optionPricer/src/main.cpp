@@ -3,8 +3,6 @@
 #include<ctime>
 #include<cstdlib>
 #include"EuropeanOption.h"
-#include"getVecMean.h"
-#include"getVecStdDev.h"
 
 using namespace Rcpp;
 using std::vector;
