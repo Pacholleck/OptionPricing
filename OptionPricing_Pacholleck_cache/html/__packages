@@ -8,3 +8,6 @@ dplyr
 stringr
 forcats
 optionPricer
+usethis
+devtools
+here

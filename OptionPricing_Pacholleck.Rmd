@@ -1,9 +1,12 @@
 ---
 title: "Applied Finance: European Up-and-In Put Option"
 subtitle: "Path-dependent option pricing with Monte Carlo and the `Rcpp` package"
-author: "Dustin Pacholleck"
+author: "Dustin Pacholleck - 437968"
 date: "Academic Year 2022/2023"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    theme: journal
 ---
 
 ```{r setup, include=FALSE}
@@ -21,6 +24,8 @@ Specifically, the project tries to:
     a) volatility of the underlying instrument returns, and
     b) time to maturity of the option.
 
+It tries to achieve so, by building a `rccp` package. 
+
 # Assumptions
 
 The project assumes: 
@@ -32,7 +37,7 @@ The project assumes:
 
 # Description of the Option
 
-The given option is descriped as followed: 
+The given option is described as followed: 
 
 * price of the underlying at the moment of option pricing: $S0 = 95$,
 * strike price $K = 100$,
@@ -43,23 +48,44 @@ The given option is descriped as followed:
 A holder of an European option can exercise only at exercise date. The option includes an Up-and-In barrier which means the underlying price has to be higher than the barrier to activate the option.
 
 In finance, an **option** is an agreement, which gives the holder a right for **buy** or **sell** a certain underlying instrument for a given price (*exercise price*) at a given moment in futures (*expiry date*).
-
-**PUT** option -- gives the holder right to **sell** a given amount of underlying instrument for a given price at the given moment in future
+**PUT** option -- gives the holder right to **sell** a given amount of underlying instrument for a given price at the given moment in future. 
+`(Source: Lecture Slides)`
 
 # Interpretation of the results
 
 ```{r Setup, message=FALSE, warning=FALSE, include=FALSE}
 
-# loading packages
+## Installing Packages
+# install.packages("devtools")
+# install.packages('tidyverse')
+# install.packages('here')
+
+## Loading packages
+library(devtools)
 library(tidyverse)
-library(optionPricer)
+library(here)
+
+setwd(here()) # adjust if needed
+
+###### Options to install the option pricer package ###### 
+## Please make sure it is not currently installed:
+#
 # remove.packages("optionPricer")
-# detach("package:optionPricer", unload = TRUE) # if it still is in memory
+
+## 1) install package from file
 # 
 # install.packages("Packages/optionPricer_1.0.tar.gz",
 #                  type = "source",
 #                  repos = NULL)
 
+## 2) install package from GitRepo
+# source('secret.R') # my Git Key is stored in a separate file
+# auth_token <- 'Please add your auth token here (https://github.com/settings/tokens)'
+# devtools::install_github('Pacholleck/OptionPricing/Packages/optionPricer',auth_token=auth_token)
+
+library(optionPricer)
+
+###################################################################################################
 
 #' Calculate the theoretical price of a European style up-and-in put option using Monte Carlo simulation
 #' @param nInt the number of time steps per year
@@ -71,15 +97,21 @@ library(optionPricer)
 #' @param B the barrier level
 #' @param nReps the number of Monte Carlo simulations to run
 #' @return the approximated theoretical price of the up-and-in put option
-#' @examples
-#' up_and_in_put_option_R(126,100,95,0.24,0.07,0.75,125,1000)
+#' @example
+#' getEuropeanPutPrice_R(126,100,95,0.24,0.07,0.75,125,1000)
+
+## Setting nReps as default tp 10.000 for easy computation. Please adjust if wanted.
+nReps <- 10000
+
 ```
 
-## Determing the Barrier
-```{r Barrier, echo=FALSE, message=FALSE, warning=FALSE, cache=TRUE}
+## Determining the Barrier
+```{r Barrier, echo=FALSE, message=FALSE, warning=FALSE}
+
+
 # R wrapping function: general
 getEuropeanPutPrice_withB <- function(B) {
-  return(optionPricer::getEuropeanPutPrice(252,100,95,0.24,0.07,0.75,B,10000))
+  return(optionPricer::getEuropeanPutPrice(252,100,95,0.24,0.07,0.75,B,nReps))
 }
 
 # arguments values of values of function 
@@ -99,8 +131,8 @@ tibble( B, prices) %>%
 
 The barrier seems to have an effect within the range of 90 to 160 on the option price. Therefore, for this project we will assume the barrier to be $B = 125$.
 
-## Calculate Theoretical Price 
-```{r Price Estimation, echo=FALSE, message=FALSE, warning=FALSE, cache=TRUE}
+## Calculating the Theoretical Price 
+```{r Price Estimation, echo=FALSE, message=FALSE, warning=FALSE}
 
 # R wrapping function: general
 getEuropeanPutPrice_R <- function(nInt, strike, spot, vol, r, expiry, B, nReps) {
@@ -108,19 +140,19 @@ getEuropeanPutPrice_R <- function(nInt, strike, spot, vol, r, expiry, B, nReps) 
 }
 
 # Estimate theoretical price of the given option
-price <- getEuropeanPutPrice_R(252,100,95,0.24,0.07,0.75,125,10000)
+price <- getEuropeanPutPrice_R(252,100,95,0.24,0.07,0.75,125,nReps)
 
 ```
 
-The theoretical option price is estimated as **`r price`** for the given option. 
+The theoretical option price is estimated to be **`r price`** for the given option. 
 
-## Investigate Relationship of Price, Volatility and Time to Maturity 
-```{r Relationship, echo=FALSE, message=FALSE, warning=FALSE, cache=TRUE}
+## Investigating the Relationship of Price, Volatility and Time to Maturity 
+```{r Relationship, echo=FALSE, message=FALSE, warning=FALSE}
 
 # R wrapping function: option price vs. volatility and maturity
 getEuropeanPutPrice_WithVolAndExpiry <- function (vol, expiry) {
   return(
-    optionPricer::getEuropeanPutPrice(252,100,95,vol,0.07,expiry,125,10000))
+    optionPricer::getEuropeanPutPrice(252,100,95,vol,0.07,expiry,125,nReps))
 }
 
 # sequences of argument values
@@ -149,7 +181,7 @@ grid %>%
 
 ```
 
-1. **time to maturity** -- influences positively the put option values. The longer time to maturity, the higher the probability that the option becomes active and in-the-money.
+1. **time to maturity** -- influences positively the put option values. The longer the time to maturity, the higher the probability that the option becomes active and in-the-money.
 
 2. **volatility of underlying prices** -- influences positively the put option values. The higher the volatility, the higher the probability that the option becomes active and in-the-money.
 
