@@ -4,8 +4,8 @@
 
 There are two approaches for using the option pricer. 
 
-1. Download the `OptionPricing_Pacholleck.Rmd` file and uncomment `devtools::install_github` in line 84. Don't forget to provide your git access token as well.
-2. Clone the Repo, open the `OptionPricing_Pacholleck.Rmd` file, and uncomment `install.packages` in line 77. Make sure your file path is correct.
+1. Download the `OptionPricing_Pacholleck.Rmd` file and uncomment `devtools::install_github` in line 84. Don't forget to provide your git access token as well. This will install the `rccp` package directly from this Repo.
+2. Clone the Repo, open the `OptionPricing_Pacholleck.Rmd` file, and uncomment `install.packages` in line 77. Make sure your file path is correct. This will use the ziped package provided in the files. 
 
 ## Objective
 
