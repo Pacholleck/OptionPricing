@@ -45,6 +45,6 @@ The given option is described as followed:
 A holder of an European option can exercise only at exercise date. The option includes an Up-and-In barrier which means the underlying price has to be higher than the barrier to activate the option.
 
 In finance, an **option** is an agreement, which gives the holder a right for **buy** or **sell** a certain underlying instrument for a given price (*exercise price*) at a given moment in futures (*expiry date*).
-
-**PUT** option -- gives the holder right to **sell** a given amount of underlying instrument for a given price at the given moment in future
+**PUT** option -- gives the holder right to **sell** a given amount of underlying instrument for a given price at the given moment in future. 
+`(Source: Lecture Slides)`
  
