@@ -10,6 +10,8 @@ There are two approaches for using the option pricer.
 1. Download the `OptionPricing_Pacholleck.Rmd` file and uncomment `devtools::install_github` in line 84. Don't forget to provide your git access token as well. This will install the `rccp` package directly from this Repo.
 2. Clone the Repo, open the `OptionPricing_Pacholleck.Rmd` file, and uncomment `install.packages` in line 77. Make sure your file path is correct. This will use the ziped package provided in the files. 
 
+The `OptionPricing_Pacholleck.html` file contains a rendered html version as a report of the project.
+
 ## Objective
 
 This project aims to use Monte Carlo Simulation for pricing a European style up-and-in put option with a barrier active between the moment of pricing and the option expiry.
