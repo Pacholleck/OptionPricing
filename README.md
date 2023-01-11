@@ -1,6 +1,6 @@
 # Applied Finance: European Up-and-In Put Option
-By Dustin Pacholleck 
-M.A Data Science and Business Analytics Student
+By Dustin Pacholleck <br/>
+M.A Data Science and Business Analytics Student <br/>
 University of Warsaw
 
 ## Usage of this Repository
