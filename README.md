@@ -1,5 +1,12 @@
 # Applied Finance: European Up-and-In Put Option
 
+## Usage of this Repository
+
+There are two approaches for using the option pricer. 
+
+1. Download the `OptionPricing_Pacholleck.Rmd` file and uncomment `devtools::install_github` in line 84. Don't forget to provide your git access token as well.
+2. Clone the Repo, open the `OptionPricing_Pacholleck.Rmd` file, and uncomment `install.packages` in line 77. Make sure your file path is correct.
+
 ## Objective
 
 This project aims to use Monte Carlo Simulation for pricing a European style up-and-in put option with a barrier active between the moment of pricing and the option expiry.
